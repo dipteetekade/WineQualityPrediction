@@ -21,7 +21,7 @@ public class TrainApp {
                 .option("inferSchema", "true") // Automatically infer data types
                 .option("delimiter", ";")      // Specify semicolon as the delimiter
                 .option("quote", "\"")         // Handle quoted column names
-                .csv("file:///home/ubuntu/datasets/TrainingDataset.csv");
+                .csv("file:///home/ubuntu/TrainingDataset.csv");
 
         // Load validation data from local filesystem
         Dataset<Row> validationData = spark.read()
@@ -29,7 +29,7 @@ public class TrainApp {
                 .option("inferSchema", "true")
                 .option("delimiter", ";")
                 .option("quote", "\"")
-                .csv("file:///home/ubuntu/datasets/ValidationDataset.csv");
+                .csv("file:///home/ubuntu/ValidationDataset.csv");
 
         // Print schema for debugging
         System.out.println("Training Data Schema:");
@@ -43,9 +43,9 @@ public class TrainApp {
 
         // Assemble features into a single vector
         VectorAssembler assembler = new VectorAssembler()
-                .setInputCols(new String[]{"volatile acidity", "citric acid",
+                .setInputCols(new String[]{"fixed acidity","volatile acidity", "citric acid",
                         "residual sugar", "chlorides", "free sulfur dioxide",
-                        "total sulfur dioxide", "density", "sulphates", "alcohol"})
+                        "total sulfur dioxide", "density", "pH", "sulphates", "alcohol"})
                 .setOutputCol("features");
 
         Dataset<Row> trainingTransformed = assembler.transform(trainingDataRenamed);
