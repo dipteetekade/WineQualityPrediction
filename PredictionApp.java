@@ -10,32 +10,29 @@ import java.io.PrintWriter;
 
 public class PredictionApp {
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.err.println("Usage: PredictApp <model-path> <input-csv>");
-            System.exit(1);
-        }
-
-        String modelPath = args[0];
-        String inputCsvPath = args[1];
+        // Hardcoded paths
+        String modelPath = "file:/app/models/wine-quality-model";
+        String inputCsvPath = "/home/ubuntu/TestDataset.csv";
 
         SparkSession spark = SparkSession.builder()
             .appName("WineQualityPrediction")
+	    .master("local[*]")
             .getOrCreate();
 
         Dataset<Row> rawTestData = spark.read()
             .option("header", "true")
             .option("inferSchema", "true")
             .option("delimiter", ";")
-            .csv(inputCsvPath);
+            .csv("file:/app/dataset/TestDataset.csv");
 
         Dataset<Row> testData = cleanHeadings(rawTestData);
 
         VectorAssembler assembler = new VectorAssembler()
             .setInputCols(new String[]{
-                "volatile_acidity", "citric_acid", "residual_sugar", 
+                "fixed_acidity", "volatile_acidity", "citric_acid", "residual_sugar", 
                 "chlorides", "free_sulfur_dioxide", 
                 "total_sulfur_dioxide", "density", 
-                "sulphates", "alcohol"})
+                "pH", "sulphates", "alcohol"})
             .setOutputCol("features");
 
         Dataset<Row> transformedTestData = assembler.transform(testData);
